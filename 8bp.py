@@ -26,4 +26,16 @@ def scrape_disco():
       results.append(disco_record)
   return results
 
-print scrape_disco()
+def scrape_artists():
+  artists_url = "http://www.8bitpeoples.com/artist/bit_shifter"
+  r = docurl(artists_url)
+  rootsoup = BeautifulSoup(r.text)
+  bio = []
+  nobio = []
+  for item in rootsoup.find('div',id='artistsLeftColumn').find_all('a','links'):
+    bio.append(item.text)
+  for item in rootsoup.find_all('div','noBio'):
+    nobio.append(item.text)
+  desc = rootsoup.find('div','texts justify').text
+
+scrape_artists()
