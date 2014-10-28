@@ -1,31 +1,38 @@
 create table Artist(
-	artist_name		varchar(30), not null
-	real_name		varchar(30), 
+	artist_name		varchar(70), not null
+	real_name		varchar(40), 
 	location		varchar(30),
 	website			varchar(30),
-	bio_text		varchar(200),
-	picture			something(),
+	bio_text		varchar(500),
+	photo_link		varchar(30),
 	primary key (artist_name))
 
 create table Album(
-	release_#		numeric(15,0), not null
-	album_name 		varchar(30), not null
-	download_link	varchar(30),
+	release_#		numeric(10,0), not null
+	album_name 		varchar(70), not null
+	download_link		varchar(30),
 	#_tracks		numeric(3,0),
-	artist_name 	varchar(30), not null
-	description		varchar(200),
-	image			something(),
+	artist_name 		varchar(70), not null
+	description		varchar(500),
+	art_link		varchar(30),
 	primary key (release_#),
 	foreign key (artist_name) references Artist
 		on delete cascade
 		on update cascade)
 
 create table Track(
-	album_name 		varchar(30), not null
+	album_name 		varchar(70), not null
 	track_#			numeric(3,0),
-	title			varchar(30),
+	title			varchar(70),
 	stream_link		varchar(30),
 	primary key (album_name, track_#)
 	foreign key (album_name) references Album
 		on delete cascade
 		on delete cascade)
+
+Some SQL Queries:
+Search for artist by name
+Get all albums by artist
+Get all tracks on album
+Get albums based on release_#
+Search artists based on locations
