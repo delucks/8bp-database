@@ -32,7 +32,12 @@ create table Track(
 
 Some SQL Queries:
 Search for artist by name
+	select * from Artist where artist_name="$$";
 Get all albums by artist
+	select * from Album where artist_name="$$";
 Get all tracks on album
+	select * from Track where album_name="$$";
 Get albums based on release_#
+	select * from Album where release_# > 185;
 Search artists based on locations
+	select * from Artist where location="New York City";
