@@ -34,18 +34,48 @@ def scrape_disco():
       results.append(disco_record)
   return results
 
-def scrape_artists():
+def scrape_nobio():
+  nobio = []
   artists_url = "http://www.8bitpeoples.com/artist/bit_shifter"
   r = docurl(artists_url)
   rootsoup = BeautifulSoup(r.text)
-  bio = []
-  nobio = []
-  for item in rootsoup.find('div',id='artistsLeftColumn').find_all('a','links'):
-    results = {}
-    bio.append(item.text)
   for item in rootsoup.find_all('div','noBio'):
     nobio.append(item.text)
-  desc = rootsoup.find('div','texts justify').text
+
+# returns an array of artist information dictionaries
+def scrape_bio():
+  artists_url = "http://www.8bitpeoples.com/artist/bit_shifter"
+  r = docurl(artists_url)
+  rootsoup = BeautifulSoup(r.text)
+  artist_links = []
+  artists = []
+  for item in rootsoup.find('div',id='artistsLeftColumn').find_all('a','links'):
+    artist_links.append([item.text,item.get('href')])
+  for item in artist_links:
+    results = {}
+    resp = docurl(item[1])
+    soup = BeautifulSoup(resp.text)
+    results['name'] = item[0]
+    results['url'] = item[1]
+    results['desc'] = soup.find('div','texts justify').text
+    results['imglink'] = soup.find('img',alt='Artist Photo').get('src')
+    info = soup.find('div',id='artistsInfo').text.split('\n')
+    for line in range(len(info)):
+      item = info[line].strip()
+      if (item == "REAL NAME"):
+        results['realname'] = info[line+1].strip()
+        continue
+      elif (item == "BIRTHDATE"):
+        results['birthday'] = info[line+1].strip()
+        continue
+      elif (item == "WEB SITE"):
+        results['site'] = info[line+1].strip()
+        continue
+      elif (item == "LOCATION"):
+        results['location'] = info[line+1].strip()
+        continue
+    artists.append(results)
+  return artists
 
 def setup_db(cursor):
     cursor.execute("create table if not exists Artist("
@@ -82,10 +112,10 @@ def main():
   #                  db="xxx")
   db = sqlite3.connect('tmp.sqlite3')
   c = db.cursor()
-  #setup_db(c)
+  setup_db(c)
   for item in scrape_disco():
     c.execute("INSERT INTO Album values('"+item['release_id']+"','"+item['albumname']+"','"+item['dl']+"','"+len(item['tracks'])+"','"+item['artist']+"','"+item['comment']+"','"+item['img']+"')")
     for track in item['tracks']:
       c.execute("INSERT INTO Track values('"+item['albumname']+"','"+track['number']+"','"+track['title']+"','"+track['url']+"')")
-
-main()
+  for item in scrape_bio():
+    c.execute("INSERT INTO Artist values('"+item['name']+"','"+item['realname']+"','"+item['location']+"','"+item['site']+"','"+item['desc']+"','"+item['imglink']+"')")
