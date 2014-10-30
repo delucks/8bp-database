@@ -3,6 +3,7 @@
 from bs4 import BeautifulSoup
 from ParserCommon import docurl
 import MySQLdb
+import sqlite3
 
 # returns an array of record dictionaries
 def scrape_disco():
@@ -13,12 +14,17 @@ def scrape_disco():
   for index,item in enumerate(rootsoup.find_all('div','discographyBlock')):
     if (item.find('div','albumName')) is not None:
       disco_record = {}
+      disco_record['img'] = item.find('div','albumImage').find('img').get('src')
       disco_record['albumname'] = item.find('div','albumName').text
       disco_record['artist'] = item.find('div','albumArtist').text
       disco_record['artistlink'] = item.find('div','albumArtist').find('a').get('href')
       disco_record['tracks'] = []
       for trackentry in item.find_all('a','albumTrack'):
-        disco_record['tracks'].append(trackentry.text)
+        track_record = {}
+        track_record['number'] = int(trackentry.text[0:2])
+        track_record['title'] = trackentry.text[3:]
+        track_record['url'] = trackentry.get('href')
+        disco_record['tracks'].append(track_record)
       if (item.find('a','goLink') is not None):
         disco_record['dl'] = item.find('a','goLink').get('href')
       else:
@@ -42,49 +48,44 @@ def scrape_artists():
   desc = rootsoup.find('div','texts justify').text
 
 def setup_db(cursor):
-    cursor.execute("create table if not exists Artist(
-                    artist_name		varchar(70), not null
-                    real_name		varchar(40), 
-                    location		varchar(30),
-                    website			varchar(30),
-                    bio_text		varchar(500),
-                    photo_link		varchar(30),
-                    primary key (artist_name))")
-    cursor.execute("create table if not exists Album(
-                    release_#		numeric(10,0), not null
-                    album_name 		varchar(70), not null
-                    download_link		varchar(30),
-                    #_tracks		numeric(3,0),
-                    artist_name 		varchar(70), not null
-                    description		varchar(500),
-                    art_link		varchar(30),
-                    primary key (release_#),
-                    foreign key (artist_name) references Artist
-                    on delete cascade
-                    on update cascade)")
-    cursor.execute("create table if not exists Track(
-                    album_name 		varchar(70), not null
-                    track_#			numeric(3,0),
-                    title			varchar(70),
-                    stream_link		varchar(30),
-                    primary key (album_name, track_#)
-                    foreign key (album_name) references Album
-                    on delete cascade
-                    on delete cascade)")
+    cursor.execute("create table if not exists Artist("
+                    "artist_name		varchar(70) not null"
+                    "real_name		varchar(40), "
+                    "location		varchar(30),"
+                    "website			varchar(30),"
+                    "bio_text		varchar(500),"
+                    "photo_link		varchar(30),"
+                    "primary key (artist_name))")
+    cursor.execute("create table if not exists Album("
+                    "release_no		varchar(10,0) not null"
+                    "album_name 		varchar(70) not null"
+                    "download_link		varchar(30),"
+                    "no_tracks		numeric(3,0),"
+                    "artist_name 		varchar(70), not null"
+                    "description		varchar(500),"
+                    "art_link		varchar(30),"
+                    "primary key (release_no),"
+                    "foreign key (artist_name) references Artist on delete cascade")
+    cursor.execute("create table if not exists Track("
+                    "album_name 		varchar(70), not null"
+                    "track_no			numeric(3,0),"
+                    "title			varchar(70),"
+                    "stream_link		varchar(30),"
+                    "primary key (album_name, track_no),"
+                    "foreign key (album_name) references Album"
+                    "on delete cascade)")
 
 def main():
-  db = MySQLdb.connect(host="localhost",
-                    user="xxx",
-                    passwd="xxx",
-                    db="xxx")
+  #db = MySQLdb.connect(host="localhost",
+  #                  user="xxx",
+  #                  passwd="xxx",
+  #                  db="xxx")
+  db = sqlite3.connect('tmp.sqlite3')
   c = db.cursor()
+  #setup_db(c)
   for item in scrape_disco():
-    # TODO
-    c.execute("INSERT INTO Album values('"+item+"')")
+    c.execute("INSERT INTO Album values('"+item['release_id']+"','"+item['albumname']+"','"+item['dl']+"','"+len(item['tracks'])+"','"+item['artist']+"','"+item['comment']+"','"+item['img']+"')")
+    for track in item['tracks']:
+      c.execute("INSERT INTO Track values('"+item['albumname']+"','"+track['number']+"','"+track['title']+"','"+track['url']+"')")
 
-# for selects:
-#c.execute("SELECT * FROM BLAH")
-#for row in c.fetchall():
-#  foo
-scrape_artists()
-
+main()
