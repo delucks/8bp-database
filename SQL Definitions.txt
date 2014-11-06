@@ -8,10 +8,10 @@ create table Artist(
 	primary key (artist_name))
 
 create table Album(
-	release_#		numeric(10,0), not null
+	release_no		varchar(10), not null
 	album_name 		varchar(70), not null
 	download_link		varchar(30),
-	#_tracks		numeric(3,0),
+	no_tracks		numeric(3,0),
 	artist_name 		varchar(70), not null
 	description		varchar(500),
 	art_link		varchar(30),
@@ -30,14 +30,33 @@ create table Track(
 		on delete cascade
 		on delete cascade)
 
+
+Note: 8Bit Peoples uses a string for release numbers (i.e. 8BP-160)
+
+Justification:
+Artist:
+artist_name cannot be null because it is an essential identifier of an Artist entity.  No other attribute provides this functionality.
+
+Album:
+releaese_no, album_name, and artist_name cannot be null because they are all essential pieces for identifying an Album entity.
+
+Track:
+album_name cannot be null because it is the only attribute that distinguishes where that Track entity belongs.
+
 Some SQL Queries:
-Search for artist by name
+Search for artist by name - provide with a string, this query will return all (if any) artists that match that string, fully or partially.
 	select * from Artist where artist_name="$$";
-Get all albums by artist
+
+Get all albums by artist - provided with a string, this query will return all albums (if any) by the artist of that name.
 	select * from Album where artist_name="$$";
-Get all tracks on album
+
+Get all tracks on album - provided with a string, this query will return all tracks on any albums of that name.
 	select * from Track where album_name="$$";
-Get albums based on release_#
-	select * from Album where release_# > 185;
-Search artists based on locations
+
+The above three queries provide the most basic functionality of a record label database.  Additionally, the following queries may be added for further functionality:
+
+Get albums based on release_no - provided with a string, this query will return all albums released with a release number equal to, or lower than that release_no.
+	select * from Album where release_# >= $$;
+
+Search artists based on locations - provided with a string, this query will return all artists with a location that matches that string.
 	select * from Artist where location="New York City";
