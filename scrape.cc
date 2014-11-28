@@ -12,6 +12,7 @@
  * written in two parts: use libcurl to save the file. then, use libxml2 to parse it
  */
 
+const char* useragent = "CISC437 C++ databot (jluck@udel.edu)";
 const char* discog_filepath = "discog.html";
 const char* artist_filepath = "artist.html";
 const char* discog_url = "http://www.8bitpeoples.com/discography?show=all";
@@ -29,6 +30,7 @@ CURLcode download_page(CURL* c,const char* url,FILE* fh)
 {
 	CURLcode res;
 	curl_easy_setopt(c,CURLOPT_URL,url);
+	curl_easy_setopt(c,CURLOPT_USERAGENT,useragent);
 	curl_easy_setopt(c,CURLOPT_FOLLOWLOCATION,1L);
 	curl_easy_setopt(c,CURLOPT_WRITEFUNCTION,writer);
 	curl_easy_setopt(c,CURLOPT_WRITEDATA,fh);
