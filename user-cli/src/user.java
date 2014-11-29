@@ -33,7 +33,7 @@ public class user {
 	}
 	
 	public static String[] iparse(String input) {
-		String delims = " ";	//any other delims necessary?
+		String delims = " ";				//any other delims necessary?
 		String[] input_tokens = input.split(delims);
 		return input_tokens;
 	}
