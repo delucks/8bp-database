@@ -53,7 +53,7 @@ public class user {
 			System.out.println("[ERR] You couldn't load the SQL driver");
 			System.out.println(e.getMessage());
 		}
-		String url = "jdbc:mysql://localhost:3306/jluck"; // this will change depending on the machine we're testing it on
+		String url = "jdbc:mysql://localhost:3306/pasa"; // this will change depending on the machine we're testing it on
 		String user = "pasa"; // these too
 		String password = "3577";
 		try {
