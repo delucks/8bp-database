@@ -15,21 +15,21 @@ def scrape_disco():
     if (item.find('div','albumName')) is not None:
       disco_record = {}
       disco_record['img'] = item.find('div','albumImage').find('img').get('src')
-      disco_record['albumname'] = item.find('div','albumName').text
-      disco_record['artist'] = item.find('div','albumArtist').text
+      disco_record['albumname'] = item.find('div','albumName').text.replace("\n","").replace("'","")
+      disco_record['artist'] = item.find('div','albumArtist').text.replace("\n","").replace("'","")
       disco_record['artistlink'] = item.find('div','albumArtist').find('a').get('href')
       disco_record['tracks'] = []
       for trackentry in item.find_all('a','albumTrack'):
         track_record = {}
         track_record['number'] = int(trackentry.text[0:2])
-        track_record['title'] = trackentry.text[3:]
+        track_record['title'] = trackentry.text[3:].replace("\n","").replace("'","")
         track_record['url'] = trackentry.get('href')
         disco_record['tracks'].append(track_record)
       if (item.find('a','goLink') is not None):
         disco_record['dl'] = item.find('a','goLink').get('href')
       else:
         disco_record['dl'] = None
-      disco_record['comment'] = item.find('div','albumComment').text
+      disco_record['comment'] = item.find('div','albumComment').text.replace("\n","").replace("'","")
       disco_record['release_id'] = item.find('div','albumId').text
       results.append(disco_record)
   return results
@@ -55,9 +55,9 @@ def scrape_bio():
     results = {}
     resp = docurl(item[1])
     soup = BeautifulSoup(resp.text)
-    results['name'] = item[0]
+    results['name'] = item[0].replace("\n","").replace("'","")
     results['url'] = item[1]
-    results['desc'] = soup.find('div','texts justify').text
+    results['desc'] = soup.find('div','texts justify').text.replace("\n","").replace("'","")
     results['imglink'] = soup.find('img',alt='Artist Photo').get('src')
     info = soup.find('div',id='artistsInfo').text.split('\n')
     for line in range(len(info)):
@@ -113,15 +113,18 @@ def main():
   #db = sqlite3.connect('tmp.sqlite3')
   #c = db.cursor()
   #setup_db(c)
-  for item in scrape_disco():
-    if (len(item['tracks']) > 0):
-      string = "INSERT INTO Album values('"+item['release_id']+"','"+item['albumname']+"','"+item['dl']+"','"+str(len(item['tracks']))+"','"+item['artist']+"','"+item['comment']+"','"+item['img']+"')"
-      print string.encode('utf-8')
-      for track in item['tracks']:
-        trackstring = "INSERT INTO Track values('"+item['albumname']+"','"+str(track['number'])+"','"+track['title']+"','"+track['url']+"')"
-        print trackstring.encode('utf-8')
-  for item in scrape_bio():
+  artists = scrape_bio()
+  names = [i['name'] for i in artists]
+  for item in artists:
     artiststring = "INSERT INTO Artist values('"+item['name']+"','"+item['realname']+"','"+item['location']+"','"+item['site']+"','"+item['desc']+"','"+item['imglink']+"')"
     print artiststring.encode('utf-8')
+  for item in scrape_disco():
+    if (len(item['tracks']) > 0):
+      if (item['artist'] in names):
+        string = "INSERT INTO Album values('"+item['release_id']+"','"+item['albumname']+"','"+item['dl']+"','"+str(len(item['tracks']))+"','"+item['artist']+"','"+item['comment']+"','"+item['img']+"')"
+        print string.encode('utf-8')
+        for track in item['tracks']:
+          trackstring = "INSERT INTO Track values('"+item['albumname']+"','"+str(track['number'])+"','"+track['title']+"','"+track['url']+"')"
+          print trackstring.encode('utf-8')
 
 main()
