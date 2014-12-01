@@ -5,7 +5,7 @@ import java.sql.*;
 
 public class user {
 	
-	public static boolean execute(String input) {
+	public static boolean execute(String input,BufferedReader br) {
 		String quit = "quit";
 		String artist = "artist";
 		String album = "album";
@@ -19,7 +19,20 @@ public class user {
 			return true;
 		}
 		else if (command.equals(artist)) {
-			//do sql stuff
+			System.out.println("Which artist?");
+			// grab a list of artists from the database, then print them all out so the user can choose
+			// get user input
+			try {
+				String choice = br.readLine();
+				System.out.printf("Would you like all Albums by %s? (y/n)\n", choice);
+				choice = br.readLine();
+				if (choice.charAt(0) == 'y')
+					System.out.println("Awesome. Here's some fuckin' albums for ya");
+				else
+					System.out.println("It's a sad day in the neighborhood, Mr. Rogers");
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
 		}
 		else if (command.equals(album)) {
 			//do sql stuff
@@ -142,16 +155,16 @@ public class user {
 			System.out.println("[ERR] You couldn't load the SQL driver");
 			System.out.println(e.getMessage());
 		}
-		String url = "jdbc:mysql://localhost:3306/pasa"; // this will change depending on the machine we're testing it on
-		String user = "pasa"; // these too
-		String password = "3577";
-		Database("pasa",user,password);
+		//String url = "jdbc:mysql://localhost:3306/pasa"; // this will change depending on the machine we're testing it on
+		//String user = "pasa"; // these too
+		//String password = "3577";
+		//Database("pasa",user,password);
     	
     	while(!quit) {
     		 quit = false;
     		 System.out.print("Input: \n");
     		 String in = br.readLine();
-    		 quit = execute(in);
+    		 quit = execute(in,br);
     	}
     }
 }
