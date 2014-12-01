@@ -62,7 +62,7 @@ public class user {
 			try
 			{
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
-				cn = DriverManager.getConnection("jdbc:mysql://cisc437.acad.cis.udel.edu:3306/"+dbname, userid, password);
+				cn = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+dbname, userid, password);
 			}
 			catch (Exception e)
 			{
@@ -145,12 +145,7 @@ public class user {
 		String url = "jdbc:mysql://localhost:3306/pasa"; // this will change depending on the machine we're testing it on
 		String user = "pasa"; // these too
 		String password = "3577";
-		try {
-			con = DriverManager.getConnection(url, user, password);
-		} catch (SQLException e) {
-			System.out.println("[ERR] The SQL connection attempt failed");
-			System.out.println(e.getMessage());
-		}
+		Database("pasa",user,password);
     	
     	while(!quit) {
     		 quit = false;
