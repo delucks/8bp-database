@@ -28,7 +28,7 @@ public class user {
 			//do sql stuff
 		}
 		else if (command.equals(database)) {	//Delete before turning in
-			String dbname = "pasa";
+			String dbname = "pdasa";
 			String userid = "pasa";
 			String password = "3577";
 			Database(dbname, userid, password);
