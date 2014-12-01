@@ -66,7 +66,7 @@ public class user {
 			}
 			catch (Exception e)
 			{
-				System.out.println("connection failed: " + e);
+				System.out.println("connection failed: " + e + "This is where the error is.");
 			}
 
 			try
