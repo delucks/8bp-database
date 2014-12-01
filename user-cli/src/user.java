@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.*;
 
 public class user {
 	
@@ -42,7 +43,25 @@ public class user {
     public static void main(String[] args) throws IOException {
     	
     	boolean quit = false;
+		Connection con = null;
+		Statement st = null;
     	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+		try {
+			Class.forName("com.mysql.jdbc.Driver"); // load the driver into memory
+		} catch (ClassNotFoundException e) {
+			System.out.println("[ERR] You couldn't load the SQL driver");
+			System.out.println(e.getMessage());
+		}
+		String url = "jdbc:mysql://localhost:3306/jluck"; // this will change depending on the machine we're testing it on
+		String user = "root"; // these too
+		String password = "";
+		try {
+			con = DriverManager.getConnection(url, user, password);
+		} catch (SQLException e) {
+			System.out.println("[ERR] The SQL connection attempt failed");
+			System.out.println(e.getMessage());
+		}
     	
     	while(!quit) {
     		 quit = false;
