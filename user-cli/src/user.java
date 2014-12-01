@@ -54,8 +54,8 @@ public class user {
 			System.out.println(e.getMessage());
 		}
 		String url = "jdbc:mysql://localhost:3306/jluck"; // this will change depending on the machine we're testing it on
-		String user = "root"; // these too
-		String password = "";
+		String user = "pasa"; // these too
+		String password = "3577";
 		try {
 			con = DriverManager.getConnection(url, user, password);
 		} catch (SQLException e) {
