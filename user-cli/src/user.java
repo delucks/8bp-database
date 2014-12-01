@@ -29,7 +29,7 @@ public class user {
 		}
 		else if (command.equals(database)) {	//Delete before turning in
 			String dbname = "pasa";
-			String userid = "pdasa";
+			String userid = "pasa";
 			String password = "3577";
 			Database(dbname, userid, password);
 
