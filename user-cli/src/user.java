@@ -35,7 +35,7 @@ public class user {
 
 		}
 		else 
-			System.out.println("WRONG");
+			System.out.println("Invalid");
 		
 		return false;
 	}
@@ -154,7 +154,7 @@ public class user {
     	
     	while(!quit) {
     		 quit = false;
-    		 System.out.print("WHAT DO YOU WANT \n");
+    		 System.out.print("Input: \n");
     		 String in = br.readLine();
     		 quit = execute(in);
     	}
