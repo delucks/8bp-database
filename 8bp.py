@@ -110,12 +110,18 @@ def main():
   #                  user="xxx",
   #                  passwd="xxx",
   #                  db="xxx")
-  db = sqlite3.connect('tmp.sqlite3')
-  c = db.cursor()
-  setup_db(c)
+  #db = sqlite3.connect('tmp.sqlite3')
+  #c = db.cursor()
+  #setup_db(c)
   for item in scrape_disco():
-    c.execute("INSERT INTO Album values('"+item['release_id']+"','"+item['albumname']+"','"+item['dl']+"','"+len(item['tracks'])+"','"+item['artist']+"','"+item['comment']+"','"+item['img']+"')")
-    for track in item['tracks']:
-      c.execute("INSERT INTO Track values('"+item['albumname']+"','"+track['number']+"','"+track['title']+"','"+track['url']+"')")
+    if (len(item['tracks']) > 0):
+      string = "INSERT INTO Album values('"+item['release_id']+"','"+item['albumname']+"','"+item['dl']+"','"+str(len(item['tracks']))+"','"+item['artist']+"','"+item['comment']+"','"+item['img']+"')"
+      print string.encode('utf-8')
+      for track in item['tracks']:
+        trackstring = "INSERT INTO Track values('"+item['albumname']+"','"+str(track['number'])+"','"+track['title']+"','"+track['url']+"')"
+        print trackstring.encode('utf-8')
   for item in scrape_bio():
-    c.execute("INSERT INTO Artist values('"+item['name']+"','"+item['realname']+"','"+item['location']+"','"+item['site']+"','"+item['desc']+"','"+item['imglink']+"')")
+    artiststring = "INSERT INTO Artist values('"+item['name']+"','"+item['realname']+"','"+item['location']+"','"+item['site']+"','"+item['desc']+"','"+item['imglink']+"')"
+    print artiststring.encode('utf-8')
+
+main()
