@@ -10,7 +10,7 @@ public class user {
 		String artist = "artist";
 		String album = "album";
 		String tracks = "tracks";
-		String database = "data";
+		String help = "help";
 
 		String dbname = "pasa";
 		String userid = "pasa";
@@ -103,8 +103,11 @@ public class user {
 				System.out.println(e.getMessage());
 			}*/
 		}
+		else if (command.equals(help)) {
+			helpMenu();
+		}
 		else 
-			System.out.println("Invalid");
+			System.out.println("Invalid input!");
 		
 		return false;
 	}
@@ -115,87 +118,12 @@ public class user {
 		return input_tokens;
 	}
 
-	public static void Database(String dbname, String userid, String password) {
-
-		Connection cn;
-		ResultSet currentResults;
-		Integer currentItem;
-
-		cn = null;
-		currentResults = null;
-		currentItem = null;
-
-		try
-		{
-			try
-			{
-				Class.forName("com.mysql.jdbc.Driver").newInstance();
-				cn = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+dbname, userid, password);
-			}
-			catch (Exception e)
-			{
-				System.out.println("connection failed: " + e);
-			}
-
-			try
-			{
-				System.out.println("show databases");
-				Statement st1 = cn.createStatement();
-				ResultSet rs1 = st1.executeQuery("show databases");
-				while (rs1.next())
-				{
-				    System.out.println("Database: "+rs1.getString(1));
-				}
-				st1.close();
-			}
-			catch (SQLException e) {
-				System.out.println("Query failed: " + e);
-		    }
-
-		    try
-		    {
-				System.out.println("use " + dbname);
-				Statement st2 = cn.createStatement();
-				st2.executeUpdate("use " + dbname);
-		    }
-		    catch (SQLException e) {
-				System.out.println("Update failed: " + e);
-		    }
-
-		    try
-		    {
-				System.out.println("create table test (a int, b char(5))");
-				Statement st3 = cn.createStatement();
-				st3.executeUpdate("create table test (a int, b char(5))");
-		    	}
-		   	catch (SQLException e) {
-				System.out.println("Update failed: " + e);
-				System.out.println("Note from TA: Make sure your real programs can elegantly handle cases like this\n");
-		    }
-
-		    try
-		    {
-				System.out.println("show tables");
-				Statement st4 = cn.createStatement();
-				ResultSet rs4 = st4.executeQuery("show tables");
-				while (rs4.next())
-				{
-			    	System.out.println("Table: "+rs4.getString(1));
-				}
-				st4.close();
-		    }
-		    catch (SQLException e) {
-				System.out.println("Query failed: " + e);
-		    }
-
-		    cn.close();
-		}
-		catch (SQLException e)
-		{
-		    System.out.println("Some other error: " + e);
+	public static void helpMenu() {
+		System.out.println("You need help!?!?!");
+		for (String line : Files.readAllLines(Paths.get("/user-cli/help.txt"))) {
+    		System.out.println(line);
 		}
 	}
-	
 	
     public static void main(String[] args) throws IOException {
 

@@ -1,0 +1,3 @@
+This is the help file.
+It will contain some help.
+Exactly 5 of help, actually.
