@@ -30,6 +30,10 @@ public class user {
 		if (command.equals(quit)) {
 			return true;
 		}
+		
+		if (command.equals(help)) {
+			helpMenu();
+		}
 
 		//If the user did not enter "quit" connect to database
 		try
@@ -105,9 +109,6 @@ public class user {
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}*/
-		}
-		else if (command.equals(help)) {
-			helpMenu();
 		}
 		else 
 			System.out.println("Invalid input!");
