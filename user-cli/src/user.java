@@ -62,9 +62,7 @@ public class user {
 	}
 
 	public static void sqlExecute(String sql_query, String select) {
-		Connection cn;
-		ResultSet currentResults;
-		Integer currentItem;
+		Connection cn = null;
 
 		String dbname = "pasa";
 		String userid = "pasa";
