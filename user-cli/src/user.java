@@ -15,10 +15,6 @@ public class user {
 		String tracks = "tracks";
 		String help = "help";
 		String query = null;
-    	
-		Connection cn;
-		ResultSet currentResults;
-		Integer currentItem;
 
 		String[] input_tokens = iparse(input);
 		String command = input_tokens[0];
@@ -33,7 +29,7 @@ public class user {
 		}
 
 		if (input_tokens[1] != null) {
-			String query = input_tokens[1];
+			query = input_tokens[1];
 		}
 		else {
 			System.out.println("Please enter a query.");
@@ -66,6 +62,10 @@ public class user {
 	}
 
 	public static void sqlExecute(String sql_query, String select) {
+		Connection cn;
+		ResultSet currentResults;
+		Integer currentItem;
+
 		String dbname = "pasa";
 		String userid = "pasa";
 		String password = "3577";
@@ -84,7 +84,7 @@ public class user {
 		//Perform query and return result
 		try {
 				Statement st = cn.createStatement();
-				ResultSet rs = startist.executeQuery(sql_query);
+				ResultSet rs = st.executeQuery(sql_query);
 				while (rs.next()) {
   					String data = rs.getString(select);
   					System.out.println(data + "\n");
