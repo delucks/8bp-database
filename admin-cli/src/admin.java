@@ -5,15 +5,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.sql.*;
+import java.util.Arrays;
 
 public class admin {
 	
 	public static boolean execute(String input, BufferedReader br) {
 		String quit = "quit";
-		String artist = "artist";
-		String album = "album";
-		String tracks = "tracks";
 		String help = "help";
+		String database = "database";
+		String tables = "tables";
+		String[] dbTables = {"Artist", "Album", "Track"};
 		String query = null;
 
 		String[] input_tokens = iparse(input);
@@ -37,23 +38,30 @@ public class admin {
 		}
 
 		//build query and submit to sqlExecute
-		if (command.equals(artist)) {
-			String select = "album_name";
-			String sql_query = "SELECT album_name FROM Album WHERE artist_name = " + query;
-			System.out.println("Albums by the artist " + query + ":");
-			sqlExecute(sql_query, select);
+		if (command.equals(tables)) {
+			String sql_query = "show tables";
+			System.out.println("Tables:");
+			sqlExecute(sql_query);
 		}
-		else if (command.equals(album)) {
-			String select = "artist_name";
-			String sql_query = "SELECT artist_name FROM Album WHERE album_name = " + query;
-			System.out.println("The album " + query + " is by the artist:");
-			sqlExecute(sql_query, select);
+		else if (command.equals(database)) {
+			String sql_query = "show database";
+			System.out.println("Database:");
+			sqlExecute(sql_query);
 		}
-		else if (command.equals(tracks)) {
-			String select = "title";
-			String sql_query = "SELECT title FROM Track WHERE album_name = " + query;
-			System.out.println("The tracks on the album " + query + " are:");
-			sqlExecute(sql_query, select);
+		else if (Arrays.asList(dbTables).contains(command)) {
+			//command is one of the table names - figure out which and do that thing
+			if (command.equals(dbTables[0])) {
+				//it's Artist
+
+			}
+			else if (command.equals(dbTables[1])) {
+				//it's Album
+
+			}
+			else {
+				//it's Track
+
+			}
 		}
 		else 
 			System.out.println("Invalid input!");
@@ -61,7 +69,7 @@ public class admin {
 		return false;
 	}
 
-	public static void sqlExecute(String sql_query, String select) {
+	public static void sqlExecute(String sql_query) {
 		Connection cn = null;
 
 		String dbname = "pasa";
@@ -84,10 +92,11 @@ public class admin {
 			try {
 					Statement st = cn.createStatement();
 					ResultSet rs = st.executeQuery(sql_query);
+					/*
 					while (rs.next()) {
-  						String data = rs.getString(select);
-  						System.out.println(data + "\n");
-					}
+  						String data = rs.getString(select);		//This is probably not going to be needed
+  						System.out.println(data + "\n");		//for admin-cli 
+					}*/
 					st.close();
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
