@@ -14,10 +14,6 @@ public class user {
 		String album = "album";
 		String tracks = "tracks";
 		String help = "help";
-
-		String dbname = "pasa";
-		String userid = "pasa";
-		String password = "3577";
     	
 		Connection cn;
 		ResultSet currentResults;
@@ -30,12 +26,50 @@ public class user {
 		if (command.equals(quit)) {
 			return true;
 		}
-		
-		if (command.equals(help)) {
+		else if (command.equals(help)) {
 			helpMenu();
+			return false;
 		}
 
-		//If the user did not enter "quit" connect to database
+		if (input_tokens[1] != null) {
+			String query = input_tokens[1];
+		}
+		else {
+			System.out.println("Please enter a query.");
+			return false;
+		}
+
+		//build query and submit to sqlExecute
+		if (command.equals(artist)) {
+			String select = album_name;
+			String sql_query = "SELECT album_name FROM Album WHERE artist_name = " + query;
+			System.out.println("Albums by the artist " + query + ":");
+			sqlExecute(sql_query, select);
+		}
+		else if (command.equals(album)) {
+			String select = artist_name;
+			"SELECT artist_name FROM Album WHERE album_name = " + query;
+			System.out.println("The album " + query + " is by the artist:");
+			sqlExecute(sql_query, select);
+		}
+		else if (command.equals(tracks)) {
+			String select = title;
+			"SELECT title FROM Track WHERE album_name = " + query;
+			System.out.println("The tracks on the album " + query + " are:");
+			sqlExecute(sql_query, select);
+		}
+		else 
+			System.out.println("Invalid input!");
+
+		return false;
+	}
+
+	public static void sqlExecute(String sql_query, String select) {
+		String dbname = "pasa";
+		String userid = "pasa";
+		String password = "3577";
+
+		//Connect to db
 		try
 			{
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -46,74 +80,18 @@ public class user {
 				System.out.println("connection failed: " + e);
 			}
 
-		if (command.equals(artist)) {
-			if (input_tokens[1] != null) {
-				//if user enters "artist x" find all albums by x.
-				System.out.println("Albums by the artist " + input_tokens[1] + ":");
-				/*
-				try {
-					Statement stArtist = cn.createStatement();
-					ResultSet rsArtist = startist.executeQuery("SELECT album_name FROM Album WHERE artist_name = " + input_tokens[1]);
-					while (rsArtist.next()) {
-  						String albumName = rsArtist.getString("album_name");
-  						System.out.println(albumName + "\n");
-					}
-				} catch (Exception e) {
-					System.out.println(e.getMessage());
-				}*/
-			}
-			else {
-				/* 
-				 * if user enters "artist" and nothing else
-				 * grab a list of artists from the database, then print them all out so the user can choose
-				 * get user input
-				 */
-				System.out.println("Choose an artist");
-				try {
-					String choice = br.readLine();
-					System.out.printf("Would you like all Albums by %s? (y/n)\n", choice);
-					choice = br.readLine();
-					if (choice.charAt(0) == 'y')
-						System.out.println("Awesome. Here's some fuckin' albums for ya");
-					else
-						System.out.println("It's a sad day in the neighborhood, Mr. Rogers");
-				} catch (Exception e) {
-					System.out.println(e.getMessage());
-				}
-			}
-		}
-		else if (command.equals(album)) {
-			System.out.println("The album " + input_tokens[1] + " is by the artist:");
-			/*
-			try {
-				Statement stAlbum = cn.createStatement();
-				ResultSet rsAlbum = startist.executeQuery("SELECT artist_name FROM Album WHERE album_name = " + input_tokens[1]);
-				while (rsAlbum.next()) {
-  					String albumName = rsArtist.getString("artist_name");
-  					System.out.println(albumName + "\n");
+		//Perform query and return result
+		try {
+				Statement st = cn.createStatement();
+				ResultSet rs = startist.executeQuery(sql_query);
+				while (rs.next()) {
+  					String data = rs.getString(select);
+  					System.out.println(data + "\n");
 				}
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
-			}*/
-		}
-		else if (command.equals(tracks)) {
-			System.out.println("The tracks on the album " + input_tokens[1] + " are:");
-			/*
-			try {
-				Statement stTracks = cn.createStatement();
-				ResultSet rsTracks = startist.executeQuery("SELECT title FROM Track WHERE album_name = " + input_tokens[1]);
-				while (rsTracks.next()) {
-  					String trackTitle = rsTrack.getString("title");
-  					System.out.println(albumName + "\n");
-				}
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-			}*/
-		}
-		else 
-			System.out.println("Invalid input!");
-		
-		return false;
+			}
+		cn.close;
 	}
 	
 	public static String[] iparse(String input) {
@@ -124,7 +102,6 @@ public class user {
 
 	public static void helpMenu() {
 		try {
-			System.out.println("You need help!?!?!");
 			File file = new File("help.txt");
 			FileReader fileReader = new FileReader(file);
 			BufferedReader bufferedReader = new BufferedReader(fileReader);
