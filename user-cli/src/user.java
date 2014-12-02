@@ -68,29 +68,34 @@ public class user {
 		String userid = "pasa";
 		String password = "3577";
 
-		//Connect to db
-		try
-			{
-				Class.forName("com.mysql.jdbc.Driver").newInstance();
-				cn = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+dbname, userid, password);
-			}
-			catch (Exception e)
-			{
-				System.out.println("connection failed: " + e);
-			}
-
-		//Perform query and return result
 		try {
-				Statement st = cn.createStatement();
-				ResultSet rs = st.executeQuery(sql_query);
-				while (rs.next()) {
-  					String data = rs.getString(select);
-  					System.out.println(data + "\n");
+		//Connect to db
+			try
+				{
+					Class.forName("com.mysql.jdbc.Driver").newInstance();
+					cn = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+dbname, userid, password);
 				}
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-			}
-		cn.close();
+				catch (Exception e)
+				{
+					System.out.println("connection failed: " + e);
+				}
+
+			//Perform query and return result
+			try {
+					Statement st = cn.createStatement();
+					ResultSet rs = st.executeQuery(sql_query);
+					while (rs.next()) {
+  						String data = rs.getString(select);
+  						System.out.println(data + "\n");
+					}
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
+			cn.close();
+		}
+		catch (SQLException e) {
+			System.out.printkn("error: " + e);
+		}
 	}
 	
 	public static String[] iparse(String input) {
