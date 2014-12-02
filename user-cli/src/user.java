@@ -126,7 +126,7 @@ public class user {
 		File file = new File("help.txt");
 		FileReader fileReader = new FileReader(file);
 		BufferedReader bufferedReader = new BufferedReader(fileReader);
-		String line
+		String line;
 		while ((line = bufferedReader.readLine()) != null) {
 			System.out.println(line);
 		}
