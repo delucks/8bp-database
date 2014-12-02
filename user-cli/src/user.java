@@ -5,47 +5,101 @@ import java.sql.*;
 
 public class user {
 	
-	public static boolean execute(String input,BufferedReader br) {
+	public static boolean execute(String input, BufferedReader br) {
 		String quit = "quit";
 		String artist = "artist";
 		String album = "album";
 		String track = "track";
-		String database = "data";			//Delete before turning in
-		
+		String database = "data";
+
+		String dbname = "pasa";
+		String userid = "pasa";
+		String password = "3577";
+    	
+		Connection cn;
+		ResultSet currentResults;
+		Integer currentItem;
+
 		String[] input_tokens = iparse(input);
 		String command = input_tokens[0];
 		
-		if (command.equals(quit)) {			//this could be a switch block, but meh.
+		//Check if quit first.
+		if (command.equals(quit)) {
 			return true;
 		}
-		else if (command.equals(artist)) {
-			System.out.println("Which artist?");
-			// grab a list of artists from the database, then print them all out so the user can choose
-			// get user input
-			try {
-				String choice = br.readLine();
-				System.out.printf("Would you like all Albums by %s? (y/n)\n", choice);
-				choice = br.readLine();
-				if (choice.charAt(0) == 'y')
-					System.out.println("Awesome. Here's some fuckin' albums for ya");
-				else
-					System.out.println("It's a sad day in the neighborhood, Mr. Rogers");
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
+
+		//If the user did not enter "quit" connect to database
+		try
+			{
+				Class.forName("com.mysql.jdbc.Driver").newInstance();
+				cn = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+dbname, userid, password);
+			}
+			catch (Exception e)
+			{
+				System.out.println("connection failed: " + e);
+			}
+
+		if (command.equals(artist)) {
+			if (input_tokens[1] != null) {
+				//if user enters "artist x" find all albums by x.
+				System.out.println("Albums by the artist " + input_tokens[1] + ":");
+				/*
+				try {
+					Statement stArtist = cn.createStatement();
+					ResultSet rsArtist = startist.executeQuery("SELECT album_name FROM Album WHERE artist_name = " + input_tokens[1]);
+					while (rsArtist.next()) {
+  						String albumName = rsArtist.getString("album_name");
+  						System.out.println(albumName + "\n");
+					}
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}*/
+			}
+			else {
+				/* 
+				 * if user enters "artist" and nothing else
+				 * grab a list of artists from the database, then print them all out so the user can choose
+				 * get user input
+				 */
+				System.out.println("Choose an artist");
+				try {
+					String choice = br.readLine();
+					System.out.printf("Would you like all Albums by %s? (y/n)\n", choice);
+					choice = br.readLine();
+					if (choice.charAt(0) == 'y')
+						System.out.println("Awesome. Here's some fuckin' albums for ya");
+					else
+						System.out.println("It's a sad day in the neighborhood, Mr. Rogers");
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
 			}
 		}
 		else if (command.equals(album)) {
-			//do sql stuff
+			/*
+			try {
+				Statement stArtist = cn.createStatement();
+				ResultSet rsArtist = startist.executeQuery("SELECT album_name FROM Album WHERE artist_name = " + input_tokens[1]);
+				while (rsArtist.next()) {
+  					String albumName = rsArtist.getString("album_name");
+  					System.out.println(albumName + "\n");
+				}
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}*/
 		}
 		else if (command.equals(track)) {
-			//do sql stuff
-		}
-		else if (command.equals(database)) {	//Delete before turning in
-			String dbname = "pasa";
-			String userid = "pasa";
-			String password = "3577";
-			Database(dbname, userid, password);
-
+			/*
+			try {
+				Statement stArtist = cn.createStatement();
+				ResultSet rsArtist = startist.executeQuery("SELECT album_name FROM Album WHERE artist_name = " + input_tokens[1]);
+				while (rsArtist.next()) {
+  					String albumName = rsArtist.getString("album_name");
+  					System.out.println(albumName + "\n");
+				}
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}*/
 		}
 		else 
 			System.out.println("Invalid");
@@ -54,17 +108,12 @@ public class user {
 	}
 	
 	public static String[] iparse(String input) {
-		String delims = " ";				//any other delims necessary?
+		String delims = " ";
 		String[] input_tokens = input.split(delims);
 		return input_tokens;
 	}
 
 	public static void Database(String dbname, String userid, String password) {
-		
-		Connection cn;
-		ResultSet currentResults;
-		Integer currentItem;
-
 
 		cn = null;
 		currentResults = null;
@@ -79,7 +128,7 @@ public class user {
 			}
 			catch (Exception e)
 			{
-				System.out.println("connection failed: " + e + "This is where the error is.");
+				System.out.println("connection failed: " + e);
 			}
 
 			try
@@ -143,28 +192,15 @@ public class user {
 	
 	
     public static void main(String[] args) throws IOException {
-    	
-    	boolean quit = false;
-		Connection con = null;
-		Statement st = null;
-    	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-		try {
-			Class.forName("com.mysql.jdbc.Driver"); // load the driver into memory
-		} catch (ClassNotFoundException e) {
-			System.out.println("[ERR] You couldn't load the SQL driver");
-			System.out.println(e.getMessage());
-		}
-		//String url = "jdbc:mysql://localhost:3306/pasa"; // this will change depending on the machine we're testing it on
-		//String user = "pasa"; // these too
-		//String password = "3577";
-		//Database("pasa",user,password);
+    	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    	boolean quit = false;
     	
     	while(!quit) {
     		 quit = false;
     		 System.out.print("Input: \n");
     		 String in = br.readLine();
-    		 quit = execute(in,br);
+    		 quit = execute(in, br);
     	}
     }
 }
