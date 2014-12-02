@@ -9,7 +9,7 @@ public class user {
 		String quit = "quit";
 		String artist = "artist";
 		String album = "album";
-		String track = "track";
+		String track = "tracks";
 		String database = "data";
 
 		String dbname = "pasa";
@@ -76,25 +76,26 @@ public class user {
 			}
 		}
 		else if (command.equals(album)) {
+			System.out.println("The album " + input_tokens[1] + "is by the artist:");
 			/*
 			try {
-				Statement stArtist = cn.createStatement();
-				ResultSet rsArtist = startist.executeQuery("SELECT album_name FROM Album WHERE artist_name = " + input_tokens[1]);
-				while (rsArtist.next()) {
-  					String albumName = rsArtist.getString("album_name");
+				Statement stAlbum = cn.createStatement();
+				ResultSet rsAlbum = startist.executeQuery("SELECT artist_name FROM Album WHERE album_name = " + input_tokens[1]);
+				while (rsAlbum.next()) {
+  					String albumName = rsArtist.getString("artist_name");
   					System.out.println(albumName + "\n");
 				}
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}*/
 		}
-		else if (command.equals(track)) {
+		else if (command.equals(tracks)) {
 			/*
 			try {
-				Statement stArtist = cn.createStatement();
-				ResultSet rsArtist = startist.executeQuery("SELECT album_name FROM Album WHERE artist_name = " + input_tokens[1]);
-				while (rsArtist.next()) {
-  					String albumName = rsArtist.getString("album_name");
+				Statement stTracks = cn.createStatement();
+				ResultSet rsTracks = startist.executeQuery("SELECT title FROM Track WHERE album_name = " + input_tokens[1]);
+				while (rsTracks.next()) {
+  					String trackTitle = rsTrack.getString("title");
   					System.out.println(albumName + "\n");
 				}
 			} catch (Exception e) {
