@@ -94,7 +94,7 @@ public class user {
 			cn.close();
 		}
 		catch (SQLException e) {
-			System.out.printkn("error: " + e);
+			System.out.println("error: " + e);
 		}
 	}
 	
