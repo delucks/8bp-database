@@ -88,6 +88,7 @@ public class user {
   						String data = rs.getString(select);
   						System.out.println(data + "\n");
 					}
+					st.close();
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				}
