@@ -9,7 +9,7 @@ public class user {
 		String quit = "quit";
 		String artist = "artist";
 		String album = "album";
-		String track = "tracks";
+		String tracks = "tracks";
 		String database = "data";
 
 		String dbname = "pasa";
@@ -90,6 +90,7 @@ public class user {
 			}*/
 		}
 		else if (command.equals(tracks)) {
+			System.out.println("The tracks on the album " + input_tokens[1] + "are:");
 			/*
 			try {
 				Statement stTracks = cn.createStatement();
@@ -115,6 +116,10 @@ public class user {
 	}
 
 	public static void Database(String dbname, String userid, String password) {
+
+		Connection cn;
+		ResultSet currentResults;
+		Integer currentItem;
 
 		cn = null;
 		currentResults = null;
