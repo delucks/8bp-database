@@ -14,6 +14,7 @@ public class user {
 		String album = "album";
 		String tracks = "tracks";
 		String help = "help";
+		String query = null;
     	
 		Connection cn;
 		ResultSet currentResults;
@@ -41,19 +42,19 @@ public class user {
 
 		//build query and submit to sqlExecute
 		if (command.equals(artist)) {
-			String select = album_name;
+			String select = "album_name";
 			String sql_query = "SELECT album_name FROM Album WHERE artist_name = " + query;
 			System.out.println("Albums by the artist " + query + ":");
 			sqlExecute(sql_query, select);
 		}
 		else if (command.equals(album)) {
-			String select = artist_name;
+			String select = "artist_name";
 			String sql_query = "SELECT artist_name FROM Album WHERE album_name = " + query;
 			System.out.println("The album " + query + " is by the artist:");
 			sqlExecute(sql_query, select);
 		}
 		else if (command.equals(tracks)) {
-			String select = title;
+			String select = "title";
 			String sql_query = "SELECT title FROM Track WHERE album_name = " + query;
 			System.out.println("The tracks on the album " + query + " are:");
 			sqlExecute(sql_query, select);
