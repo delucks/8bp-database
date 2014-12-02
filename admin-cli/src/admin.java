@@ -1,162 +1,134 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.sql.*;
 
 public class admin {
 	
-	public static boolean execute(String input) {
+	public static boolean execute(String input, BufferedReader br) {
 		String quit = "quit";
 		String artist = "artist";
 		String album = "album";
-		String track = "track";
-		String database = "data";			//Delete before turning in
-		
+		String tracks = "tracks";
+		String help = "help";
+		String query = null;
+
 		String[] input_tokens = iparse(input);
 		String command = input_tokens[0];
 		
-		if (command.equals(quit)) {			//this could be a switch block, but meh.
+		//Check if quit first.
+		if (command.equals(quit)) {
 			return true;
 		}
-		else if (command.equals(artist)) {
-			//do sql stuff
+		else if (command.equals(help)) {
+			helpMenu();
+			return false;
+		}
+
+		if (input_tokens[1] != null) {
+			query = input_tokens[1];
+		}
+		else {
+			System.out.println("Please enter a query.");
+			return false;
+		}
+
+		//build query and submit to sqlExecute
+		if (command.equals(artist)) {
+			String select = "album_name";
+			String sql_query = "SELECT album_name FROM Album WHERE artist_name = " + query;
+			System.out.println("Albums by the artist " + query + ":");
+			sqlExecute(sql_query, select);
 		}
 		else if (command.equals(album)) {
-			//do sql stuff
+			String select = "artist_name";
+			String sql_query = "SELECT artist_name FROM Album WHERE album_name = " + query;
+			System.out.println("The album " + query + " is by the artist:");
+			sqlExecute(sql_query, select);
 		}
-		else if (command.equals(track)) {
-			//do sql stuff
-		}
-		else if (command.equals(database)) {	//Delete before turning in
-			String dbname = "pasa";
-			String userid = "pasa";
-			String password = "3577";
-			Database(dbname, userid, password);
-
+		else if (command.equals(tracks)) {
+			String select = "title";
+			String sql_query = "SELECT title FROM Track WHERE album_name = " + query;
+			System.out.println("The tracks on the album " + query + " are:");
+			sqlExecute(sql_query, select);
 		}
 		else 
-			System.out.println("Invalid");
-		
+			System.out.println("Invalid input!");
+
 		return false;
+	}
+
+	public static void sqlExecute(String sql_query, String select) {
+		Connection cn = null;
+
+		String dbname = "pasa";
+		String userid = "pasa";
+		String password = "3577";
+
+		try {
+			//Connect to db
+			try
+				{
+					Class.forName("com.mysql.jdbc.Driver").newInstance();
+					cn = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+dbname, userid, password);
+				}
+				catch (Exception e)
+				{
+					System.out.println("connection failed: " + e);
+				}
+
+			//Perform query and return result
+			try {
+					Statement st = cn.createStatement();
+					ResultSet rs = st.executeQuery(sql_query);
+					while (rs.next()) {
+  						String data = rs.getString(select);
+  						System.out.println(data + "\n");
+					}
+					st.close();
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
+			cn.close();
+		}
+		catch (SQLException e) {
+			System.out.println("error: " + e);
+		}
 	}
 	
 	public static String[] iparse(String input) {
-		String delims = " ";				//any other delims necessary?
+		String delims = " ";
 		String[] input_tokens = input.split(delims);
 		return input_tokens;
 	}
 
-	public static void Database(String dbname, String userid, String password) {
-		
-		Connection cn;
-		ResultSet currentResults;
-		Integer currentItem;
-
-
-		cn = null;
-		currentResults = null;
-		currentItem = null;
-
-		try
-		{
-			try
-			{
-				Class.forName("com.mysql.jdbc.Driver").newInstance();
-				cn = DriverManager.getConnection("jdbc:mysql://cisc437.acad.cis.udel.edu:3306/"+dbname, userid, password);
+	public static void helpMenu() {
+		try {
+			File file = new File("help.txt");
+			FileReader fileReader = new FileReader(file);
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			String line;
+			while ((line = bufferedReader.readLine()) != null) {
+				System.out.println(line);
 			}
-			catch (Exception e)
-			{
-				System.out.println("connection failed: " + e + "This is where the error is.");
-			}
-
-			try
-			{
-				System.out.println("show databases");
-				Statement st1 = cn.createStatement();
-				ResultSet rs1 = st1.executeQuery("show databases");
-				while (rs1.next())
-				{
-				    System.out.println("Database: "+rs1.getString(1));
-				}
-				st1.close();
-			}
-			catch (SQLException e) {
-				System.out.println("Query failed: " + e);
-		    }
-
-		    try
-		    {
-				System.out.println("use " + dbname);
-				Statement st2 = cn.createStatement();
-				st2.executeUpdate("use " + dbname);
-		    }
-		    catch (SQLException e) {
-				System.out.println("Update failed: " + e);
-		    }
-
-		    try
-		    {
-				System.out.println("create table test (a int, b char(5))");
-				Statement st3 = cn.createStatement();
-				st3.executeUpdate("create table test (a int, b char(5))");
-		    	}
-		   	catch (SQLException e) {
-				System.out.println("Update failed: " + e);
-				System.out.println("Note from TA: Make sure your real programs can elegantly handle cases like this\n");
-		    }
-
-		    try
-		    {
-				System.out.println("show tables");
-				Statement st4 = cn.createStatement();
-				ResultSet rs4 = st4.executeQuery("show tables");
-				while (rs4.next())
-				{
-			    	System.out.println("Table: "+rs4.getString(1));
-				}
-				st4.close();
-		    }
-		    catch (SQLException e) {
-				System.out.println("Query failed: " + e);
-		    }
-
-		    cn.close();
-		}
-		catch (SQLException e)
-		{
-		    System.out.println("Some other error: " + e);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
-	
     public static void main(String[] args) throws IOException {
-    	
-    	boolean quit = false;
-		Connection con = null;
-		Statement st = null;
-    	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-		try {
-			Class.forName("com.mysql.jdbc.Driver"); // load the driver into memory
-		} catch (ClassNotFoundException e) {
-			System.out.println("[ERR] You couldn't load the SQL driver");
-			System.out.println(e.getMessage());
-		}
-		String url = "jdbc:mysql://localhost:3306/pasa"; // this will change depending on the machine we're testing it on
-		String user = "pasa"; // these too
-		String password = "3577";
-		try {
-			con = DriverManager.getConnection(url, user, password);
-		} catch (SQLException e) {
-			System.out.println("[ERR] The SQL connection attempt failed");
-			System.out.println(e.getMessage());
-		}
+    	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    	boolean quit = false;
     	
     	while(!quit) {
     		 quit = false;
     		 System.out.print("Admin Input: \n");
     		 String in = br.readLine();
-    		 quit = execute(in);
+    		 quit = execute(in, br);
     	}
     }
 }

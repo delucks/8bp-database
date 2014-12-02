@@ -69,7 +69,7 @@ public class user {
 		String password = "3577";
 
 		try {
-		//Connect to db
+			//Connect to db
 			try
 				{
 					Class.forName("com.mysql.jdbc.Driver").newInstance();
