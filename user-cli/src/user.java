@@ -1,4 +1,9 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.sql.*;
 
 public class user {
@@ -118,8 +123,12 @@ public class user {
 
 	public static void helpMenu() {
 		System.out.println("You need help!?!?!");
-		for (String line : Files.readAllLines(Paths.get("/user-cli/help.txt"))) {
-    		System.out.println(line);
+		File file = new File("help.txt");
+		FileReader fileReader = new FileReader(file);
+		BufferedReader bufferedReader = new BufferedReader(fileReader);
+		String line
+		while ((line = bufferedReader.readLine()) != null) {
+			System.out.println(line);
 		}
 	}
 	
