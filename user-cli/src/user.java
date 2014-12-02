@@ -48,13 +48,13 @@ public class user {
 		}
 		else if (command.equals(album)) {
 			String select = artist_name;
-			"SELECT artist_name FROM Album WHERE album_name = " + query;
+			String sql_query = "SELECT artist_name FROM Album WHERE album_name = " + query;
 			System.out.println("The album " + query + " is by the artist:");
 			sqlExecute(sql_query, select);
 		}
 		else if (command.equals(tracks)) {
 			String select = title;
-			"SELECT title FROM Track WHERE album_name = " + query;
+			String sql_query = "SELECT title FROM Track WHERE album_name = " + query;
 			System.out.println("The tracks on the album " + query + " are:");
 			sqlExecute(sql_query, select);
 		}
@@ -91,7 +91,7 @@ public class user {
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
-		cn.close;
+		cn.close();
 	}
 	
 	public static String[] iparse(String input) {
