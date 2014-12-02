@@ -76,7 +76,7 @@ public class user {
 			}
 		}
 		else if (command.equals(album)) {
-			System.out.println("The album " + input_tokens[1] + "is by the artist:");
+			System.out.println("The album " + input_tokens[1] + " is by the artist:");
 			/*
 			try {
 				Statement stAlbum = cn.createStatement();
@@ -90,7 +90,7 @@ public class user {
 			}*/
 		}
 		else if (command.equals(tracks)) {
-			System.out.println("The tracks on the album " + input_tokens[1] + "are:");
+			System.out.println("The tracks on the album " + input_tokens[1] + " are:");
 			/*
 			try {
 				Statement stTracks = cn.createStatement();
