@@ -14,13 +14,16 @@ public class admin {
 		String help = "help";
 		String database = "database";
 		String tables = "tables";
+		String add = "add";
+		String delete = "delete";
+		String display = "display";
 		String[] dbTables = {"Artist", "Album", "Track"};
-		String query = null;
 
 		String[] input_tokens = iparse(input);
 		String command = input_tokens[0];
+		String table = null;
 		
-		//Check if quit first.
+		//Check if quit or help first (avoids db connection).
 		if (command.equals(quit)) {
 			return true;
 		}
@@ -29,39 +32,46 @@ public class admin {
 			return false;
 		}
 
-		if (input_tokens[1] != null) {
-			query = input_tokens[1];
-		}
-		else {
-			System.out.println("Please enter a query.");
-			return false;
-		}
-
 		//build query and submit to sqlExecute
 		if (command.equals(tables)) {
 			String sql_query = "show tables";
 			System.out.println("Tables:");
 			sqlExecute(sql_query);
+			return false;
 		}
 		else if (command.equals(database)) {
 			String sql_query = "show database";
 			System.out.println("Database:");
 			sqlExecute(sql_query);
+			return false;
 		}
-		else if (Arrays.asList(dbTables).contains(command)) {
-			//command is one of the table names - figure out which and do that thing
-			if (command.equals(dbTables[0])) {
-				//it's Artist
 
-			}
-			else if (command.equals(dbTables[1])) {
-				//it's Album
-
+		//Check that a tablename was entered, and that it is valid.
+		if (input_tokens[1] != null) {
+			if (Arrays.asList(dbTables).contains(input_tokens[1])) {
+				table = input_tokens[1];
 			}
 			else {
-				//it's Track
-
+				System.out.println("Invalid table name.");
+				return false;
 			}
+		}
+		else {
+			System.out.println("You must include a table name to " + command);
+			return false;
+		}
+		
+		if (command.equals(display)) {
+			String sql_query = "display " + table;
+			System.out.println(table + ":");
+			sqlExecute(sql_query);
+			return false;
+		}
+		else if (command.equals(add)) {
+
+		}
+		else if (command.equals(delete)) {
+
 		}
 		else 
 			System.out.println("Invalid input!");
