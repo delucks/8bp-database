@@ -23,7 +23,13 @@ public class admin {
 		String command = input_tokens[0];
 		String table = null;
 		
-		//Check if quit or help first (avoids db connection).
+		//Make sure the user input something at all
+		if (command.length() == 0) {
+			System.out.println("Please input a command.  Type \"help\" for a list of commands.");
+			return false;
+		}
+		
+		//Check if command is quit or help first (avoids db connection).
 		if (command.equals(quit)) {
 			return true;
 		}
@@ -47,7 +53,7 @@ public class admin {
 		}
 
 		//Check that a tablename was entered, and that it is valid.
-		if (input_tokens[1] != null) {
+		if (input_tokens.length > 1 && input_tokens[1] != null) {
 			if (Arrays.asList(dbTables).contains(input_tokens[1])) {
 				table = input_tokens[1];
 			}
@@ -61,20 +67,30 @@ public class admin {
 			return false;
 		}
 		
+		//more complicated commands.  Build query and submit it.
 		if (command.equals(display)) {
-			String sql_query = "display " + table;
+			String sql_query = command + " " + table;
 			System.out.println(table + ":");
 			sqlExecute(sql_query);
 			return false;
 		}
 		else if (command.equals(add)) {
-
+			String sql_query =  command + " " + table + " ";
+			for (int i = 2; i < input_tokens.length; i++) {
+				sql_query = sql_query + input_tokens[i] + " ";
+			}
+			sqlExecute(sql_query);
+			return false;
 		}
 		else if (command.equals(delete)) {
-
+			/*do stuff
+			 *probably should handle WHERE input for sophisticated deletes
+			 *probably should check to make sure WHERE isn't the last thing the
+			 *user inputs. Bleh.
+			 */
 		}
 		else 
-			System.out.println("Invalid input!");
+			System.out.println("Invalid input! Type \"help\" for a list of commands.");
 
 		return false;
 	}
