@@ -49,7 +49,7 @@ public class admin {
 			return false;
 		}
 
-		// execute tables as a raw metadata command
+		// this isn't passed to sqlexecute because we must fetch metadata information
 		if (command.equals(tables)) {
 			try {
 				DatabaseMetaData md = cn.getMetaData();
@@ -63,6 +63,7 @@ public class admin {
 			}
 			return false;
 		}
+		// this isn't passed to sqlexecute because we must fetch metadata information
 		else if (command.equals(columns)) {
 			if (query.equals("Track"))
 			{
