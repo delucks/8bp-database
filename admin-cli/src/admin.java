@@ -128,6 +128,13 @@ public class admin {
 		}
 		else if (command.equals(delete)) {
 			System.out.println("[!!] We've purposefully left out the ability to delete, check the source code for the commented out correct code.");
+			/*String sql_query = "DELETE FROM " + table + " WHERE('";
+			for (int i = 2; i < input_tokens.length; i++) {
+				sql_query = sql_query + input_tokens[i] + "','";
+			}
+			sql_query = sql_query + "')";
+			sqlExecute(sql_query);*/
+			return false;
 		}
 		else 
 			System.out.println("[!!] Invalid input! Type \"help\" for a list of commands.");
@@ -158,12 +165,6 @@ public class admin {
 		try {
 			Statement st = cn.createStatement();
 			st.execute(sql_query);
-			/*
-			   ResultSet rs = st.executeQuery(sql_query);
-			   while (rs.next()) {
-			   String data = rs.getString(select);		//This is probably not going to be needed
-			   System.out.println(data + "\n");		//for admin-cli 
-			   }*/
 			st.close();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
