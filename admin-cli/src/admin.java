@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.sql.*;
 import java.util.Arrays;
+import java.util.ArrayList;
 
 public class admin {
 	
@@ -14,22 +15,29 @@ public class admin {
 	public static boolean execute(String input, BufferedReader br) {
 		String quit = "quit";
 		String help = "help";
-		String database = "database";
+		String columns = "columns";
 		String tables = "tables";
 		String add = "add";
 		String delete = "delete";
-		String display = "display";
 		String[] dbTables = {"Artist", "Album", "Track"};
 
 		String[] input_tokens = iparse(input);
 		String command = input_tokens[0];
 		String table = null;
-		String query = null;
+		String query = "";
 		
 		//Make sure the user input something at all
 		if (command.length() == 0) {
-			System.out.println("Please input a command.  Type \"help\" for a list of commands.");
+			System.out.println("[!!] Please input a command.  Type \"help\" for a list of commands.");
 			return false;
+		}
+
+		if (input_tokens.length > 1) {
+			for (int i=1;i<input_tokens.length;i++)
+			{
+				query = query + input_tokens[i] + " ";
+			}
+			query = query.trim();
 		}
 		
 		//Check if command is quit or help first (avoids db connection).
@@ -41,37 +49,54 @@ public class admin {
 			return false;
 		}
 
-		//build query and submit to sqlExecute
+		// execute tables as a raw metadata command
 		if (command.equals(tables)) {
 			try {
 				DatabaseMetaData md = cn.getMetaData();
 				ResultSet rs = md.getTables(null, null, "%", null);
+				System.out.println("[**] All tables:");
 				while (rs.next()) {
 					System.out.println(rs.getString(3));
 				}
 			} catch (SQLException e) {
 				System.out.println(e.getMessage());
 			}
-			//sqlExecute(sql_query);
 			return false;
 		}
-		else if (command.equals(database)) {
-			String sql_query = "show databases";
-			System.out.println("Database:");
-			sqlExecute(sql_query);
-			return false;
-		}
-
-		if (input_tokens.length > 1) {
-			query = ""; // handle multiword queries
-			for (int i=1;i<input_tokens.length;i++)
+		else if (command.equals(columns)) {
+			if (query.equals("Track"))
 			{
-				query = query + input_tokens[i] + " ";
+				table = "Track";
 			}
-			query = query.trim();
-		}
-		else {
-			System.out.println("[::] Please enter a query.");
+			else if (query.equals("Album"))
+			{
+				table = "Album";
+			}
+			else
+			{
+				table = "Artist";
+			}
+			System.out.println("[**] Displaying columns for table "+ table);
+			try {
+				Statement statement = cn.createStatement();
+				ResultSet resultSet = statement.executeQuery("SELECT * FROM " + table);
+
+				ResultSetMetaData metadata = resultSet.getMetaData();
+				int columnCount = metadata.getColumnCount();
+
+				ArrayList<String> cms = new ArrayList<String>();
+				for (int i = 1; i < columnCount; i++) {
+					String columnName = metadata.getColumnName(i);
+					cms.add(columnName);
+				}
+
+				for (String columnName : cms) {
+					//String value = resultSet.getString(columnName);
+					System.out.println(columnName);
+				}
+			} catch (SQLException e) {
+				System.out.println("[!!] Schema query failed! " + e.getMessage());
+			}
 			return false;
 		}
 
@@ -81,40 +106,30 @@ public class admin {
 				table = input_tokens[1];
 			}
 			else {
-				System.out.println("Invalid table name.");
+				System.out.println("[!!] Invalid table name.");
 				return false;
 			}
 		}
 		else {
-			System.out.println("You must include a table name to " + command);
+			System.out.println("[!!] Invalid command or tables not specified for add/delete: " + command);
 			return false;
 		}
 		
 		//more complicated commands.  Build query and submit it.
-		if (command.equals(display)) {
-			String sql_query = command + " " + table;
-			System.out.println(table + ":");
-			sqlExecute(sql_query);
-			return false;
-		}
-		else if (command.equals(add)) {
-			String sql_query =  command + " " + table + " ";
+		if (command.equals(add)) {
+			String sql_query =  "INSERT INTO " + table + " values('";
 			for (int i = 2; i < input_tokens.length; i++) {
-				sql_query = sql_query + input_tokens[i] + " ";
+				sql_query = sql_query + input_tokens[i] + "','";
 			}
+			sql_query = sql_query + "')";
 			sqlExecute(sql_query);
 			return false;
 		}
 		else if (command.equals(delete)) {
-			/*do stuff
-			 *probably should handle WHERE input for sophisticated deletes
-			 *probably should check to make sure WHERE isn't the last thing the
-			 *user inputs. Bleh.
-			 */
+			System.out.println("[!!] We've purposefully left out the ability to delete, check the source code for the commented out correct code.");
 		}
 		else 
-			System.out.println("Invalid input! Type \"help\" for a list of commands.");
-
+			System.out.println("[!!] Invalid input! Type \"help\" for a list of commands.");
 		return false;
 	}
 
@@ -132,7 +147,7 @@ public class admin {
 		}
 		catch (Exception e)
 		{
-			System.out.println("connection failed: " + e);
+			System.out.println("[!!] Database connection failed: " + e);
 		}
 		return conn;
 	}
@@ -141,8 +156,9 @@ public class admin {
 		//Perform query and return result
 		try {
 			Statement st = cn.createStatement();
-			ResultSet rs = st.executeQuery(sql_query);
+			st.execute(sql_query);
 			/*
+			   ResultSet rs = st.executeQuery(sql_query);
 			   while (rs.next()) {
 			   String data = rs.getString(select);		//This is probably not going to be needed
 			   System.out.println(data + "\n");		//for admin-cli 

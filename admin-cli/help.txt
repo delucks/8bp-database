@@ -1,3 +1,8 @@
-This is the help file.
-It will contain some help.
-Exactly 5 of help, actually.
+Available Administrator Commands:
+  columns {Track|Album|Artist}: Show the database columns for a particular table
+  tables: Show all tables in the database
+  add {Table Name} {Column 1} {Column 2}... : Add a row of data into a table.
+    Note: Column descriptions can be found with the "columns" command
+	delete: Not implemented
+  help: Display this help text.
+  quit: duh.
