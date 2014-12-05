@@ -43,9 +43,16 @@ public class admin {
 
 		//build query and submit to sqlExecute
 		if (command.equals(tables)) {
-			String sql_query = "show tables";
-			System.out.println("Tables:");
-			sqlExecute(sql_query);
+			try {
+				DatabaseMetaData md = cn.getMetaData();
+				ResultSet rs = md.getTables(null, null, "%", null);
+				while (rs.next()) {
+					System.out.println(rs.getString(3));
+				}
+			} catch (SQLException e) {
+				System.out.println(e.getMessage());
+			}
+			//sqlExecute(sql_query);
 			return false;
 		}
 		else if (command.equals(database)) {
