@@ -10,7 +10,7 @@ public class user {
 
 	private static Connection cn;
 	
-	public static boolean execute(String input, BufferedReader br, Connection db) {
+	public static boolean execute(String input, BufferedReader br) {
 		String quit = "quit";
 		String artist = "artist";
 		String album = "album";
@@ -49,19 +49,19 @@ public class user {
 			String select = "album_name";
 			String sql_query = "SELECT album_name FROM Album WHERE artist_name = '" + query + "'";
 			System.out.println("[::] Albums by the artist " + query + ":");
-			sqlExecute(sql_query, select, db);
+			sqlExecute(sql_query, select);
 		}
 		else if (command.equals(album)) {
 			String select = "artist_name";
 			String sql_query = "SELECT artist_name FROM Album WHERE album_name = '" + query + "'";
 			System.out.println("[::] The album " + query + " is by the artist:");
-			sqlExecute(sql_query, select, db);
+			sqlExecute(sql_query, select);
 		}
 		else if (command.equals(tracks)) {
 			String select = "title";
 			String sql_query = "SELECT title FROM Track WHERE album_name = '" + query + "'";
 			System.out.println("[::] The tracks on the album " + query + " are:");
-			sqlExecute(sql_query, select, db);
+			sqlExecute(sql_query, select);
 		}
 		else if (command.equals(list))
 		{
@@ -84,7 +84,7 @@ public class user {
 			}
 			String sql_query = "SELECT " + select + " FROM " + table;
 			System.out.println("[::] Displaying all " + query);
-			sqlExecute(sql_query, select, db);
+			sqlExecute(sql_query, select);
 		}
 		else 
 			System.out.println("[::] Invalid input!");
@@ -95,11 +95,9 @@ public class user {
 	public static Connection initDB()
 	{
 		Connection conn = null;
-
 		String dbname = "pasa";
 		String userid = "pasa";
 		String password = "3577";
-
 		//Connect to db
 		try
 		{
@@ -113,7 +111,7 @@ public class user {
 		return conn;
 	}
 
-	public static void sqlExecute(String sql_query, String select, Connection cn) {
+	public static void sqlExecute(String sql_query, String select) {
 		//Perform query and return result
 		try {
 			Statement st = cn.createStatement();
@@ -159,7 +157,7 @@ public class user {
 			quit = false;
 			System.out.print("[::] Query: ");
 			String in = br.readLine();
-			quit = execute(in, br, cn);
+			quit = execute(in, br);
 		}
 		// finally, close the DB
 		try {

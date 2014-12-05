@@ -9,6 +9,8 @@ import java.util.Arrays;
 
 public class admin {
 	
+	private static Connection cn;
+	
 	public static boolean execute(String input, BufferedReader br) {
 		String quit = "quit";
 		String help = "help";
@@ -46,7 +48,7 @@ public class admin {
 			return false;
 		}
 		else if (command.equals(database)) {
-			String sql_query = "show database";
+			String sql_query = "show databases";
 			System.out.println("Database:");
 			sqlExecute(sql_query);
 			return false;
@@ -95,45 +97,41 @@ public class admin {
 		return false;
 	}
 
-	public static void sqlExecute(String sql_query) {
-		Connection cn = null;
-
+	public static Connection initDB()
+	{
+		Connection conn = null;
 		String dbname = "pasa";
 		String userid = "pasa";
 		String password = "3577";
-
-		try {
-			//Connect to db
-			try
-				{
-					Class.forName("com.mysql.jdbc.Driver").newInstance();
-					cn = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+dbname, userid, password);
-				}
-				catch (Exception e)
-				{
-					System.out.println("connection failed: " + e);
-				}
-
-			//Perform query and return result
-			try {
-					Statement st = cn.createStatement();
-					ResultSet rs = st.executeQuery(sql_query);
-					/*
-					while (rs.next()) {
-  						String data = rs.getString(select);		//This is probably not going to be needed
-  						System.out.println(data + "\n");		//for admin-cli 
-					}*/
-					st.close();
-				} catch (Exception e) {
-					System.out.println(e.getMessage());
-				}
-			cn.close();
+		//Connect to db
+		try
+		{
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/"+dbname, userid, password);
 		}
-		catch (SQLException e) {
-			System.out.println("error: " + e);
+		catch (Exception e)
+		{
+			System.out.println("connection failed: " + e);
+		}
+		return conn;
+	}
+
+	public static void sqlExecute(String sql_query) {
+		//Perform query and return result
+		try {
+			Statement st = cn.createStatement();
+			ResultSet rs = st.executeQuery(sql_query);
+			/*
+			   while (rs.next()) {
+			   String data = rs.getString(select);		//This is probably not going to be needed
+			   System.out.println(data + "\n");		//for admin-cli 
+			   }*/
+			st.close();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
 	}
-	
+
 	public static String[] iparse(String input) {
 		String delims = " ";
 		String[] input_tokens = input.split(delims);
@@ -158,6 +156,7 @@ public class admin {
 
     	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     	boolean quit = false;
+		cn = initDB();
     	
     	while(!quit) {
     		 quit = false;
@@ -165,5 +164,11 @@ public class admin {
     		 String in = br.readLine();
     		 quit = execute(in, br);
     	}
+		// finally, close the database
+		try {
+			cn.close();
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
     }
 }
