@@ -1,1 +1,1 @@
-java -cp lib/mysql-connector-java-5.1.34-bin.jar:bin user
+/usr/local/java1.6/bin/java -cp lib/mysql-connector-java-5.1.34-bin.jar:bin user

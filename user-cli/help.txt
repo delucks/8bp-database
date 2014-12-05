@@ -1,3 +1,7 @@
-This is the help file.
-It will contain some help.
-Exactly 5 of help, actually.
+Types of Commands:
+  artist {Artist Name}: Returns all albums in the database by artist {Artist Name}
+  album {Album Name}: Returns the artist who performed the album {Album Name}
+  tracks {Album Name}: Returns a list of all the tracks on album {Album Name}
+  help: Display this help text.
+	list {artist|album|track}: Display all of a certain type.
+  quit: duh.
