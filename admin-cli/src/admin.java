@@ -24,6 +24,7 @@ public class admin {
 		String[] input_tokens = iparse(input);
 		String command = input_tokens[0];
 		String table = null;
+		String query = null;
 		
 		//Make sure the user input something at all
 		if (command.length() == 0) {
@@ -51,6 +52,19 @@ public class admin {
 			String sql_query = "show databases";
 			System.out.println("Database:");
 			sqlExecute(sql_query);
+			return false;
+		}
+
+		if (input_tokens.length > 1) {
+			query = ""; // handle multiword queries
+			for (int i=1;i<input_tokens.length;i++)
+			{
+				query = query + input_tokens[i] + " ";
+			}
+			query = query.trim();
+		}
+		else {
+			System.out.println("[::] Please enter a query.");
 			return false;
 		}
 
@@ -160,7 +174,7 @@ public class admin {
     	
     	while(!quit) {
     		 quit = false;
-    		 System.out.print("Admin Input: \n");
+    		 System.out.print("[**] Admin Input: ");
     		 String in = br.readLine();
     		 quit = execute(in, br);
     	}
